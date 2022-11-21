@@ -1,0 +1,45 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Create a simple EC2 instance
+
+Parameters:
+  InstanceType:
+    Description: EC2 instance type
+    Type: String
+    Default: t3.micro
+    AllowedValues: [t3.nano, t3.micro, t3.small, t3.medium]
+  ImageID:
+    Description: EC2 AMI ID
+    Type: String
+    Default: AmazonLinux
+    AllowedValues: [AmazonLinux, Ubuntu, Windows]
+
+Mappings:
+  AmiIdMap:
+    AmazonLinux:
+      ImageId: ami-0b0dcb5067f052a63
+    Ubuntu:
+      ImageId: ami-08c40ec9ead489470
+    Windows:
+      ImageId: ami-064d05b4fe8515623
+
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !FindInMap [AmiIdMap, !Ref ImageID, ImageId]
+      InstanceType: !Ref InstanceType
+
+Outputs:
+  InstanceId:
+    Description: EC2 instance ID
+    Value: !Ref MyInstance
+
+  PrivateIpAddress:
+    Description: EC2 instance private IP address
+    Value: !GetAtt MyInstance.PrivateIp
+
+  PiblicIpAddress:
+    Description: EC2 instance public IP address
+    Value: !GetAtt MyInstance.PublicIp
